@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/url"
-  "strings"
+	"strings"
+	"sync/atomic"
 )
 
 type Node struct {
@@ -14,18 +15,23 @@ type Node struct {
 }
 
 type NodePool struct {
-	nodes []*Node
+	nodes   []*Node
+	current uint64
 }
 
 func (np *NodePool) AddNode(n *Node) {
 	np.nodes = append(np.nodes, n)
 }
 
+func (np *NodePool) NextIdx() int {
+	return int(atomic.AddUint64(&np.current, uint64(1)) % uint64(len(np.nodes)))
+}
+
 func main() {
 	var nodeList string
 	var port int
 	flag.StringVar(&nodeList, "nodeList", "", "List of available nodes comma-separated")
-  flag.IntVar(&port, "port", 8080, "Port to run the load balancer")
+	flag.IntVar(&port,"port", 3030, "Port to serve load-balancer")
 	flag.Parse()
 
 	nodePool := &NodePool{}

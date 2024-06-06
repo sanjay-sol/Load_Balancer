@@ -6,12 +6,14 @@ import (
 	"log"
 	"net/url"
 	"strings"
+	"sync"
 	"sync/atomic"
 )
 
 type Node struct {
 	URL    *url.URL
 	Active bool
+	mutex  sync.RWMutex
 }
 
 type NodePool struct {
@@ -25,6 +27,12 @@ func (np *NodePool) AddNode(n *Node) {
 
 func (np *NodePool) NextIdx() int {
 	return int(atomic.AddUint64(&np.current, uint64(1)) % uint64(len(np.nodes)))
+}
+
+func (n *Node) isActive() bool {
+	n.mutex.RLock()
+	defer n.mutex.RUnlock()
+	return n.Active
 }
 
 func main() {

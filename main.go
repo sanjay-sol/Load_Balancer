@@ -28,7 +28,7 @@ func (np *NodePool) AddNode(n *Node) {
 func (np *NodePool) NextIdx() int {
 	return int(atomic.AddUint64(&np.current, uint64(1)) % uint64(len(np.nodes)))
 }
-
+// IsActive checks if the node is active
 func (n *Node) isActive() bool {
 	n.mutex.RLock()
 	defer n.mutex.RUnlock()

@@ -1,5 +1,13 @@
 package main 
 
+
+import (
+  "flag"
+  "fmt"
+  "log"
+  "net/url"
+)
+
 // Node - has the data about the backend server
 
 type Node struct {
@@ -15,7 +23,16 @@ type NodePool struct {
   current uint64
 }
 
-func main () {
-    
+func main() {
+	var nodeList string
+	var port int
+	flag.StringVar(&nodeList, "nodeList", "", "List of available nodes comma-separated")
+	flag.IntVar(&port, "port", 3030, "Port to serve load-balancer")
+	flag.Parse()
+
+	fmt.Println("Node List:", nodeList)
+	fmt.Println("Port:", port)
+	log.Println("Load Balancer started")
 }
+
 

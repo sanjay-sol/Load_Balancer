@@ -13,6 +13,7 @@ import (
 type Node struct {
 	URL    *url.URL
 	Active bool
+	weight float64
 	mutex  sync.RWMutex
 }
 
@@ -28,11 +29,17 @@ func (np *NodePool) AddNode(n *Node) {
 func (np *NodePool) NextIdx() int {
 	return int(atomic.AddUint64(&np.current, uint64(1)) % uint64(len(np.nodes)))
 }
-// IsActive checks if the node is active
+
 func (n *Node) isActive() bool {
 	n.mutex.RLock()
 	defer n.mutex.RUnlock()
 	return n.Active
+}
+
+func (n *Node) getWeight() float64 {
+	n.mutex.RLock()
+	defer n.mutex.RUnlock()
+	return n.weight
 }
 
 func main() {
@@ -51,6 +58,7 @@ func main() {
 		nodePool.AddNode(&Node{
 			URL:    nodeURLParsed,
 			Active: true,
+			weight: 1,
 		})
 	}
 

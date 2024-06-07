@@ -1,9 +1,9 @@
-# Load Balancer README
+# Load Balancer - README
 
 This repository contains a Go-based Load Balancer implementation designed to distribute incoming HTTP requests across multiple backend servers (nodes). The Load Balancer uses a combination of Round Robin and weighted selection with a heap to ensure efficient load distribution and reliability through health checks.
 
 ## Table of Contents
-- [Load Balancer README](#load-balancer-readme)
+- [Load Balancer - README](#load-balancer---readme)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [How It Works](#how-it-works)

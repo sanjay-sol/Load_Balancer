@@ -9,7 +9,7 @@ import (
 
 //* StartHealthCheck starts periodic health checks ( for every 10 seconds )
 func StartHealthCheck(np *balancer.NodePool) {
-	t := time.NewTicker(time.Second * 10)
+	t := time.NewTicker(time.Second * 3)
 	for range t.C {
 		log.Printf("### Starting health check ###")
 		np.HealthCheck()

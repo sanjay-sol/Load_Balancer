@@ -68,6 +68,15 @@ func (np *NodePool) Heapify(idx uint64, root bool) {
 
 //!  finds the next active node - currently based on max Heap , TODO - RoundRobin 
 func (np *NodePool) NextNode() *Node {
+	// next := np.NextIdx()
+	// for i := next; i < len(np.nodes)+next; i++ {
+	// 	idx := i % len(np.nodes)
+	// 	if np.nodes[idx].isActive() {
+	// 		atomic.StoreUint64(&np.current, uint64(idx))
+	// 		return np.nodes[idx]
+	// 	}
+	// }
+	// return nil
 	return np.nodes[0]
 }
 

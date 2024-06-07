@@ -66,7 +66,7 @@ func (np *NodePool) Heapify(idx uint64, root bool) {
 	}
 }
 
-//!  finds the next active node - currently based on max Heap , TODO - RoundRobin 
+//!  finds the next active node - currently based on max Heap , uncomment below commneted code to use RoundRobin Logic to select next Node 
 func (np *NodePool) NextNode() *Node {
 	// next := np.NextIdx()
 	// for i := next; i < len(np.nodes)+next; i++ {

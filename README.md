@@ -43,8 +43,8 @@ This repository contains a Go-based Load Balancer implementation designed to dis
 ## Installation
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/load-balancer.git
-    cd load-balancer
+    git clone https://github.com/sanjay-sol/Load_Balancer.git
+    cd Load_Balancer
     ```
 2. Install dependencies:
     ```bash
@@ -54,12 +54,22 @@ This repository contains a Go-based Load Balancer implementation designed to dis
 ## Usage
 1. **Start the Load Balancer**:
     ```bash
-    go run main.go -nodeList=http://backend1.com,http://backend2.com -port=3030
+    go run cmd/main.go -nodeList=http://backend1.com,http://backend2.com -port=3030
     ```
    Replace `http://backend1.com` and `http://backend2.com` with your backend server URLs. The `port` flag specifies the port for the Load Balancer.
+    - Example ( Start the simple test servers -- express/any on ports 8081,8082,8083)
+    ```bash
+     go run cmd/main.go -nodeList=http://localhost:8081,http://localhost:8082,http://localhost:8083 -port=3030
+   ```
+
 
 2. **Accessing the Load Balancer**:
    Once started, the Load Balancer listens for incoming HTTP requests on the specified port and routes them to the backend servers.
+
+   ```bash
+   > curl http://localhost:3030
+   ```
+   see the Requests sent to different servers automatically each time
 
 ## Load Balancing Strategies
 

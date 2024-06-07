@@ -10,8 +10,11 @@ import (
 // StartHealthCheck starts periodic health checks
 func StartHealthCheck(np *balancer.NodePool) {
 	t := time.NewTicker(time.Second * 5)
-	for range t.C {
-		log.Printf("Starting health check...")
-		np.HealthCheck()
+	for {
+		select {
+		case <-t.C:
+			log.Printf("Starting health check...")
+			np.HealthCheck()
+		}
 	}
 }

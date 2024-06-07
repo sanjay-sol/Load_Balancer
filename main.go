@@ -30,6 +30,12 @@ func (np *NodePool) NextIdx() int {
 	return int(atomic.AddUint64(&np.current, uint64(1)) % uint64(len(np.nodes)))
 }
 
+func (np *NodePool) Swap(i uint64, j uint64) {
+	temp := np.nodes[i]
+	np.nodes[i] = np.nodes[j]
+	np.nodes[j] = temp
+}
+
 func (n *Node) isActive() bool {
 	n.mutex.RLock()
 	defer n.mutex.RUnlock()

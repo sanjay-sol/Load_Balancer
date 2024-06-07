@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net/http"
 	"net/url"
 	"strings"
 	"sync"
@@ -86,14 +87,26 @@ func (n *Node) getWeight() float64 {
 	return n.weight
 }
 
+func loadBalancer(w http.ResponseWriter, r *http.Request) {
+	node := nodePool.NextNode()
+	if node != nil {
+		// Dummy reverse proxy logic (to be replaced with actual proxy logic)
+		w.Write([]byte(fmt.Sprintf("Forwarding to node: %s", node.URL)))
+		nodePool.Heapify(0, true)
+		return
+	}
+	http.Error(w, "No nodes available", http.StatusServiceUnavailable)
+}
+
+var nodePool NodePool
+
 func main() {
 	var nodeList string
 	var port int
 	flag.StringVar(&nodeList, "nodeList", "", "List of available nodes comma-separated")
-	flag.IntVar(&port, 3030, "Port to serve load-balancer")
+	flag.IntVar(&port,"port", 3030, "Port to serve load-balancer")
 	flag.Parse()
 
-	nodePool := &NodePool{}
 	for _, nodeURL := range strings.Split(nodeList, ",") {
 		nodeURLParsed, err := url.Parse(nodeURL)
 		if err != nil {
@@ -106,7 +119,11 @@ func main() {
 		})
 	}
 
+	http.HandleFunc("/", loadBalancer)
 	fmt.Println("Node List:", nodeList)
 	fmt.Println("Port:", port)
 	log.Println("Load Balancer started")
+	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
+		log.Fatal(err)
+	}
 }

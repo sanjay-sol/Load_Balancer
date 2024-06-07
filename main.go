@@ -70,6 +70,10 @@ func (np *NodePool) Heapify(idx uint64, root bool) {
 	}
 }
 
+func (np *NodePool) NextNode() *Node {
+	return np.nodes[0]
+}
+
 func (n *Node) isActive() bool {
 	n.mutex.RLock()
 	defer n.mutex.RUnlock()
@@ -86,7 +90,7 @@ func main() {
 	var nodeList string
 	var port int
 	flag.StringVar(&nodeList, "nodeList", "", "List of available nodes comma-separated")
-	flag.IntVar(&port,"port", 3030, "Port to serve load-balancer")
+	flag.IntVar(&port, 3030, "Port to serve load-balancer")
 	flag.Parse()
 
 	nodePool := &NodePool{}

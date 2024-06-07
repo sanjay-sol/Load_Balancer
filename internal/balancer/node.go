@@ -6,7 +6,6 @@ import (
 	"sync"
 )
 
-// Node holds the data about a backend server
 type Node struct {
 	URL          *url.URL
 	Active       bool
@@ -15,7 +14,7 @@ type Node struct {
 	ReverseProxy *httputil.ReverseProxy
 }
 
-// isActive returns whether node is active or dead
+//* isActive returns whether node is active or dead
 func (n *Node) isActive() bool {
 	var active bool
 	n.mutex.RLock()
@@ -24,7 +23,6 @@ func (n *Node) isActive() bool {
 	return active
 }
 
-// getWeight returns the weight of the node
 func (n *Node) getWeight() float64 {
 	n.mutex.RLock()
 	weight := n.weight
@@ -32,7 +30,7 @@ func (n *Node) getWeight() float64 {
 	return weight
 }
 
-// SetProps sets node's status and changes node's weight
+//* SetProps sets the node's status and changes node's weight accordingly
 func (n *Node) SetProps(status bool) {
 	n.mutex.Lock()
 	n.Active = status

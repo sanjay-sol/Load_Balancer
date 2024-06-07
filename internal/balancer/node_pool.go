@@ -8,30 +8,29 @@ import (
 	"time"
 )
 
-// NodePool holds slice of nodes and most recently used node index
+//* NodePool holds most recently used node index and slice of nodes 
 type NodePool struct {
 	nodes   []*Node
 	current uint64
 }
 
-// AddNode adds a new node to NodePool
+//* AddNode to the Pool
 func (np *NodePool) AddNode(n *Node) {
 	np.nodes = append(np.nodes, n)
 }
 
-// NextIdx atomically increases the counter and returns an index
+//* NextIdx atomically increases the counter and returns an index
 func (np *NodePool) NextIdx() int {
 	return int(atomic.AddUint64(&np.current, uint64(1)) % uint64(len(np.nodes)))
 }
 
-// Swap two elements in nodePool
 func (np *NodePool) Swap(i uint64, j uint64) {
 	temp := np.nodes[i]
 	np.nodes[i] = np.nodes[j]
 	np.nodes[j] = temp
 }
 
-// Heapify will rearrange the max heap based on weights, takes index and if the node is root
+//*  Will rearrange the max heap based on weights, takes index and if the node is root
 func (np *NodePool) Heapify(idx uint64, root bool) {
 	largest := idx
 	left := 2*idx + 1
@@ -67,12 +66,12 @@ func (np *NodePool) Heapify(idx uint64, root bool) {
 	}
 }
 
-// NextNode finds the next active node
+//!  finds the next active node - currently based on max Heap , TODO - RoundRobin 
 func (np *NodePool) NextNode() *Node {
 	return np.nodes[0]
 }
 
-// SetNodeStatus sets status of the given nodeURL
+//* Sets status of the given nodeURL
 func (np *NodePool) SetNodeStatus(url *url.URL, status bool) {
 	for _, n := range np.nodes {
 		if n.URL.String() == url.String() {
@@ -92,7 +91,7 @@ func (n *Node) Status() bool {
 	return true
 }
 
-// HealthCheck pings the node and updates status
+//* Pings the node and updates status
 func (np *NodePool) HealthCheck() {
 	for i, n := range np.nodes {
 		status := n.Status()

@@ -11,7 +11,7 @@ import (
 	"github.com/sanjay-sol/Load_Balancer/pkg/context"
 )
 
-// LoadBalancer balances incoming requests
+//*  balancing incoming requests
 func LoadBalancer(np *NodePool) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		attempts := contextutil.GetAttemptsFromContext(r)
@@ -26,12 +26,12 @@ func LoadBalancer(np *NodePool) func(w http.ResponseWriter, r *http.Request) {
 			np.Heapify(0, true)
 			return
 		}
-		// 0 active nodes available
+		//* 0 active available nodes
 		http.Error(w, "Downtime: No nodes available", http.StatusServiceUnavailable)
 	}
 }
 
-// AddNode adds a new node to the pool
+//* Adds a new node to the pool
 func AddNode(np *NodePool, nodeURL string) {
 	nodeURLParsed, err := url.Parse(nodeURL)
 	if err != nil {
@@ -40,22 +40,24 @@ func AddNode(np *NodePool, nodeURL string) {
 	proxy := httputil.NewSingleHostReverseProxy(nodeURLParsed)
 	proxy.ErrorHandler = func(w http.ResponseWriter, request *http.Request, e error) {
 		log.Printf("[%s] %s\n", nodeURLParsed.Host, e.Error())
+		type RetryKey int
+
+		const Retry RetryKey = 0
+
 		retries := contextutil.GetRetryFromContext(request)
 		if retries < 3 {
-			select {
-			case <-time.After(10 * time.Millisecond):
-				ctx := context.WithValue(request.Context(), contextutil.Retry, retries+1)
-				proxy.ServeHTTP(w, request.WithContext(ctx))
-			}
+			<-time.After(10 * time.Millisecond)
+			ctx := context.WithValue(request.Context(), Retry, retries+1)
+			proxy.ServeHTTP(w, request.WithContext(ctx))
 			return
 		}
 
-		// Try different node
+		//* Try different node
 		attempts := contextutil.GetAttemptsFromContext(request)
 		log.Printf("%s(%s) Attempting retry %d\n", request.RemoteAddr, request.URL.Path, attempts)
-		ctx := context.WithValue(request.Context(), contextutil.Attempts, attempts+1)
+		ctx := context.WithValue(request.Context(), Retry, attempts+1)
 
-		// After 3 retries, set this node as dead
+		//* After 3 retries, set the current node as dead
 		if attempts >= 3 {
 			np.SetNodeStatus(nodeURLParsed, false)
 		}

@@ -36,6 +36,40 @@ func (np *NodePool) Swap(i uint64, j uint64) {
 	np.nodes[j] = temp
 }
 
+func (np *NodePool) Heapify(idx uint64, root bool) {
+	largest := idx
+	left := 2*idx + 1
+	right := 2*idx + 2
+
+	if root {
+		np.nodes[idx].weight /= 2
+	}
+
+	if left < uint64(len(np.nodes)) && np.nodes[left].isActive() && np.nodes[left].getWeight() > np.nodes[largest].getWeight() {
+		largest = left
+	}
+
+	if right < uint64(len(np.nodes)) && np.nodes[right].isActive() && np.nodes[right].getWeight() > np.nodes[largest].getWeight() {
+		largest = right
+	}
+
+	if largest != idx {
+		if root {
+			np.nodes[idx].weight *= 2
+		}
+		np.Swap(largest, idx)
+		np.Heapify(largest, false)
+	}
+
+	if left < uint64(len(np.nodes)) && np.nodes[left].getWeight() < 1 {
+		np.Heapify(left, false)
+	}
+
+	if right < uint64(len(np.nodes)) && np.nodes[right].getWeight() < 1 {
+		np.Heapify(right, false)
+	}
+}
+
 func (n *Node) isActive() bool {
 	n.mutex.RLock()
 	defer n.mutex.RUnlock()

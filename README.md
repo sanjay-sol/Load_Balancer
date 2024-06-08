@@ -25,7 +25,7 @@ This repository contains a Go-based Load Balancer implementation designed to dis
 - [Node State After Health Check](#node-state-after-health-check)
   - [Node Status](#node-status)
   - [Updated Heap](#updated-heap)
-- [Exaplaination](#exaplaination)
+- [Explanation](#explanation)
 - [License](#license)
 
 ## Features
@@ -202,7 +202,7 @@ Node B: Weight 0.33
 
 ```
 
-# Exaplaination
+# Explanation
 
 - Node A: With a weight of 1.0 and active status, Node A remains at the top of the heap, indicating its readiness to handle requests.
 - Node C: Node C, with a weight of 0.8, is the next preferred node due to its relatively high weight and active status.
